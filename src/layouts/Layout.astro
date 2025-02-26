@@ -1,0 +1,43 @@
+---
+interface Props {
+  title?: string;
+}
+
+const { title = "DidxaLink - Traductor Español-Zapoteco" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Traductor entre español y zapoteco" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="font-['Inter',sans-serif] bg-white min-h-screen">
+    <!-- Background elements -->
+    <div class="fixed inset-0 z-0 overflow-hidden">
+      <div class="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+    </div>
+    
+    <!-- Content -->
+    <div class="relative z-10">
+      <slot />
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --primary-color: #3dcf8d;
+  }
+  
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #fff;
+    color-scheme: light;
+  }
+</style>
