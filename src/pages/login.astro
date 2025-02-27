@@ -98,11 +98,11 @@ import Layout from '../layouts/Layout.astro';
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email, password }),
-            credentials: 'include', // Importante para manejar cookies si las usas
+            credentials: 'include',
           });
 
           if (!response.ok) {
-            throw new Error('Error en la respuesta del servidor');
+            throw new Error(`HTTP error! status: ${response.status}`);
           }
 
           const data = await response.json();
@@ -115,7 +115,7 @@ import Layout from '../layouts/Layout.astro';
           localStorage.setItem('didxalink_auth', JSON.stringify({
             isLoggedIn: true,
             email: email,
-            role: data.user.role || 'user', // Asumiendo que el rol viene en la respuesta
+            role: data.user.role || 'user',
             token: data.session.access_token
           }));
 
