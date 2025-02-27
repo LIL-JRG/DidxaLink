@@ -1,9 +1,10 @@
 ---
 interface Props {
   title?: string;
+  showNavbar?: boolean;
 }
 
-const { title = "DidxaLink - Traductor Español-Zapoteco" } = Astro.props;
+const { title = "DidxaLink - Traductor Español-Zapoteco", showNavbar = true } = Astro.props;
 ---
 
 <!doctype html>
@@ -17,14 +18,35 @@ const { title = "DidxaLink - Traductor Español-Zapoteco" } = Astro.props;
     <title>{title}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
-  <body class="font-['Inter',sans-serif] bg-white min-h-screen">
+  <body class="font-['Inter',sans-serif] bg-white min-h-screen flex flex-col">
     <!-- Background elements -->
     <div class="fixed inset-0 z-0 overflow-hidden">
       <div class="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
     </div>
     
+    <!-- Navbar -->
+    {showNavbar && (
+      <nav class="relative z-10 bg-white shadow-sm border-b border-gray-200">
+        <div class="container mx-auto px-4">
+          <div class="flex justify-between items-center h-16">
+            <a href="/" class="flex items-center">
+              <span class="text-xl font-bold text-primary">DidxaLink</span>
+            </a>
+            <div class="flex items-center space-x-4">
+              <a href="/form" class="text-gray-700 hover:text-primary transition-colors">
+                Contribuir
+              </a>
+              <a href="/login" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+                Iniciar sesión
+              </a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    )}
+    
     <!-- Content -->
-    <div class="relative z-10">
+    <div class="relative z-10 flex-grow">
       <slot />
     </div>
   </body>

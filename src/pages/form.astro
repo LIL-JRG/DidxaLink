@@ -1,0 +1,302 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="DidxaLink - Contribuir al Traductor">
+  <main class="min-h-screen flex flex-col">
+    <div class="container mx-auto px-4 py-12 flex-grow">
+      <div class="w-full max-w-3xl mx-auto">
+        <a href="/" class="inline-flex items-center text-primary hover:underline mb-6 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+          </svg>
+          Volver al traductor
+        </a>
+
+        <div class="bg-white shadow-lg border border-gray-200 rounded-xl overflow-hidden">
+          <!-- Form Header with Illustration -->
+          <div class="bg-gradient-to-r from-primary/10 to-primary/5 p-8 border-b border-gray-200">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div class="text-center md:text-left">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Contribuir al Traductor</h1>
+                <p class="text-gray-600 max-w-md">
+                  Ayúdanos a enriquecer nuestro traductor añadiendo nuevas palabras o frases en zapoteco.
+                </p>
+              </div>
+              <div class="hidden md:block">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-32 w-32 text-primary/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Content -->
+          <div class="p-8">
+            <form class="space-y-8" id="contribution-form">
+              <!-- Progress Indicator -->
+              <div class="relative">
+                <div class="flex justify-between mb-2">
+                  <span class="text-sm font-medium text-primary">Información Personal</span>
+                  <span class="text-sm font-medium text-gray-400">Contribución</span>
+                </div>
+                <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+                  <div id="progress-bar" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary w-1/2 transition-all duration-500"></div>
+                </div>
+              </div>
+
+              <!-- Step 1: Personal Information -->
+              <div id="step-1" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre completo</label>
+                    <input 
+                      type="text" 
+                      id="name" 
+                      name="name" 
+                      required
+                      class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                      placeholder="Escribe tu nombre completo"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+                    <input 
+                      type="email" 
+                      id="email" 
+                      name="email" 
+                      required
+                      class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                      placeholder="ejemplo@correo.com"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label for="community" class="block text-sm font-medium text-gray-700 mb-1">Comunidad o región zapoteca</label>
+                  <input 
+                    type="text" 
+                    id="community" 
+                    name="community" 
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                    placeholder="¿De qué comunidad o región eres?"
+                  />
+                </div>
+
+                <div class="pt-4 flex justify-end">
+                  <button 
+                    type="button"
+                    id="next-btn"
+                    class="bg-primary text-white font-medium py-3 px-8 rounded-lg hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary flex items-center gap-2"
+                  >
+                    Siguiente
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Step 2: Translation Contribution -->
+              <div id="step-2" class="space-y-6 hidden">
+                <div>
+                  <label for="spanish" class="block text-sm font-medium text-gray-700 mb-1">Palabra o frase en español</label>
+                  <input 
+                    type="text" 
+                    id="spanish" 
+                    name="spanish" 
+                    required
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                    placeholder="Escribe la palabra o frase en español"
+                  />
+                </div>
+                
+                <div>
+                  <label for="zapotec" class="block text-sm font-medium text-gray-700 mb-1">Traducción en zapoteco</label>
+                  <input 
+                    type="text" 
+                    id="zapotec" 
+                    name="zapotec" 
+                    required
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                    placeholder="Escribe la traducción en zapoteco"
+                  />
+                </div>
+                
+                <div>
+                  <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Notas o contexto (opcional)</label>
+                  <textarea 
+                    id="notes" 
+                    name="notes" 
+                    rows="3"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                    placeholder="Añade cualquier nota o contexto que ayude a entender mejor la traducción"
+                  ></textarea>
+                </div>
+                
+                <div class="pt-4 flex justify-between">
+                  <button 
+                    type="button"
+                    id="back-btn"
+                    class="text-gray-700 bg-gray-100 font-medium py-3 px-8 rounded-lg hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center gap-2"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Anterior
+                  </button>
+                  <button 
+                    type="submit"
+                    class="bg-primary text-white font-medium py-3 px-8 rounded-lg hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary flex items-center gap-2"
+                  >
+                    Enviar contribución
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Success Message (Hidden by default) -->
+          <div id="success-message" class="hidden p-8 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-500 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">¡Gracias por tu contribución!</h2>
+            <p class="text-gray-600 mb-6">
+              Tu aporte ha sido enviado y será revisado por nuestro equipo. Juntos estamos preservando el idioma zapoteco.
+            </p>
+            <div class="flex justify-center gap-4">
+              <a href="/" class="text-primary hover:underline flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Volver al traductor
+              </a>
+              <button id="add-another" class="text-primary hover:underline flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Añadir otra contribución
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+    <footer class="w-full py-6 bg-white border-t border-gray-200 mt-auto">
+      <div class="container mx-auto px-4 text-center text-sm text-gray-600">
+        <p>© 2025 DidxaLink - Preservando nuestra lengua</p>
+      </div>
+    </footer>
+  </main>
+</Layout>
+
+<script>
+  // Form multi-step functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const step1 = document.getElementById('step-1');
+    const step2 = document.getElementById('step-2');
+    const nextBtn = document.getElementById('next-btn');
+    const backBtn = document.getElementById('back-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const form = document.getElementById('contribution-form');
+    const successMessage = document.getElementById('success-message');
+    const addAnother = document.getElementById('add-another');
+
+    // Next button click
+    nextBtn?.addEventListener('click', function() {
+      // Basic validation for step 1
+      const name = document.getElementById('name') as HTMLInputElement;
+      const email = document.getElementById('email') as HTMLInputElement;
+      
+      if (!name.value || !email.value) {
+        alert('Por favor completa los campos requeridos.');
+        return;
+      }
+      
+      // Hide step 1, show step 2
+      step1?.classList.add('hidden');
+      step2?.classList.remove('hidden');
+      
+      // Update progress bar
+      if (progressBar) progressBar.style.width = '100%';
+      
+      // Update progress text
+      const progressTexts = document.querySelectorAll('.relative span');
+      if (progressTexts[0]) progressTexts[0].classList.remove('text-primary');
+      if (progressTexts[0]) progressTexts[0].classList.add('text-gray-400');
+      if (progressTexts[1]) progressTexts[1].classList.remove('text-gray-400');
+      if (progressTexts[1]) progressTexts[1].classList.add('text-primary');
+    });
+    
+    // Back button click
+    backBtn?.addEventListener('click', function() {
+      // Show step 1, hide step 2
+      step1?.classList.remove('hidden');
+      step2?.classList.add('hidden');
+      
+      // Update progress bar
+      if (progressBar) progressBar.style.width = '50%';
+      
+      // Update progress text
+      const progressTexts = document.querySelectorAll('.relative span');
+      if (progressTexts[0]) progressTexts[0].classList.add('text-primary');
+      if (progressTexts[0]) progressTexts[0].classList.remove('text-gray-400');
+      if (progressTexts[1]) progressTexts[1].classList.add('text-gray-400');
+      if (progressTexts[1]) progressTexts[1].classList.remove('text-primary');
+    });
+    
+    // Form submission
+    form?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Get form data
+      const formData = new FormData(form);
+      const contribution = Object.fromEntries(formData.entries());
+      
+      // Store in localStorage for demo purposes
+      // In a real app, you would send this to your backend API
+      const contributions = JSON.parse(localStorage.getItem('contributions') || '[]');
+      contributions.push({
+        ...contribution,
+        id: Date.now(),
+        status: 'pending',
+        date: new Date().toISOString()
+      });
+      localStorage.setItem('contributions', JSON.stringify(contributions));
+      
+      // Hide form, show success message
+      form.style.display = 'none';
+      if (successMessage) successMessage.classList.remove('hidden');
+    });
+    
+    // Add another contribution
+    addAnother?.addEventListener('click', function() {
+      // Reset form
+      form?.reset();
+      
+      // Show step 1, hide step 2 and success message
+      step1?.classList.remove('hidden');
+      step2?.classList.add('hidden');
+      if (successMessage) successMessage.classList.add('hidden');
+      form.style.display = 'block';
+      
+      // Reset progress bar
+      if (progressBar) progressBar.style.width = '50%';
+      
+      // Reset progress text
+      const progressTexts = document.querySelectorAll('.relative span');
+      if (progressTexts[0]) progressTexts[0].classList.add('text-primary');
+      if (progressTexts[0]) progressTexts[0].classList.remove('text-gray-400');
+      if (progressTexts[1]) progressTexts[1].classList.add('text-gray-400');
+      if (progressTexts[1]) progressTexts[1].classList.remove('text-primary');
+    });
+  });
+</script>

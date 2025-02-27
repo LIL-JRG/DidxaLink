@@ -1,0 +1,625 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="DidxaLink - Panel de Administración" showNavbar={false}>
+  <main class="min-h-screen flex flex-col">
+    <!-- Dashboard Navbar -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 relative z-10">
+      <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center h-16">
+          <a href="/" class="flex items-center">
+            <span class="text-xl font-bold text-primary">DidxaLink</span>
+            <span class="ml-2 text-gray-600">| Panel de Administración</span>
+          </a>
+          <div class="flex items-center space-x-4">
+            <span id="user-email" class="text-gray-600 text-sm hidden md:inline-block"></span>
+            <button id="logout-btn" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 flex-grow">
+      <div class="w-full max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-800">Panel de Administración</h1>
+            <p class="text-gray-600">Gestiona las contribuciones al traductor</p>
+          </div>
+          <a href="/" class="inline-flex items-center text-primary hover:underline transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+            </svg>
+            Volver al inicio
+          </a>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="bg-white shadow-lg border border-gray-200 rounded-xl overflow-hidden">
+          <!-- Stats Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 border-b border-gray-200">
+            <div class="bg-blue-50 rounded-lg p-4 flex items-center">
+              <div class="rounded-full bg-blue-100 p-3 mr-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Total de contribuciones</p>
+                <p class="text-xl font-bold text-gray-800" id="total-count">0</p>
+              </div>
+            </div>
+            
+            <div class="bg-yellow-50 rounded-lg p-4 flex items-center">
+              <div class="rounded-full bg-yellow-100 p-3 mr-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Pendientes de revisión</p>
+                <p class="text-xl font-bold text-gray-800" id="pending-count">0</p>
+              </div>
+            </div>
+            
+            <div class="bg-green-50 rounded-lg p-4 flex items-center">
+              <div class="rounded-full bg-green-100 p-3 mr-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Aprobadas</p>
+                <p class="text-xl font-bold text-gray-800" id="approved-count">0</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="p-6 border-b border-gray-200 bg-gray-50">
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-gray-700 font-medium">Filtrar por:</span>
+                <select id="status-filter" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                  <option value="all">Todos</option>
+                  <option value="pending">Pendientes</option>
+                  <option value="approved">Aprobados</option>
+                  <option value="rejected">Rechazados</option>
+                </select>
+              </div>
+              
+              <div class="relative w-full md:w-64">
+                <input 
+                  type="text" 
+                  id="search-input" 
+                  placeholder="Buscar contribuciones..." 
+                  class="w-full p-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                />
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contributions Table -->
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Contribuidor
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Español
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Zapoteco
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Fecha
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Estado
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200" id="contributions-table-body">
+                <!-- Table rows will be populated by JavaScript -->
+                <tr>
+                  <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                    No hay contribuciones disponibles
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="px-6 py-4 flex items-center justify-between border-t border-gray-200">
+            <div class="flex-1 flex justify-between sm:hidden">
+              <button class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Anterior
+              </button>
+              <button class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Siguiente
+              </button>
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <p class="text-sm text-gray-700">
+                  Mostrando <span class="font-medium" id="showing-start">0</span> a <span class="font-medium" id="showing-end">0</span> de <span class="font-medium" id="total-items">0</span> resultados
+                </p>
+              </div>
+              <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination" id="pagination-container">
+                  <!-- Pagination will be populated by JavaScript -->
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+    <footer class="w-full py-6 bg-white border-t border-gray-200 mt-auto">
+      <div class="container mx-auto px-4 text-center text-sm text-gray-600">
+        <p>© 2025 DidxaLink - Preservando nuestra lengua</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Contribution Detail Modal -->
+  <div id="detail-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 border border-gray-200 shadow-xl">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-medium text-gray-800">Detalles de la contribución</h3>
+        <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="space-y-4" id="modal-content">
+        <!-- Modal content will be populated by JavaScript -->
+      </div>
+      <div class="mt-6 flex justify-end gap-3" id="modal-actions">
+        <!-- Modal actions will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Check authentication
+  document.addEventListener('DOMContentLoaded', function() {
+    const auth = JSON.parse(localStorage.getItem('didxalink_auth') || '{"isLoggedIn": false}');
+    
+    if (!auth.isLoggedIn) {
+      // Redirect to login if not authenticated
+      window.location.href = '/login';
+      return;
+    }
+    
+    // Set user email in navbar
+    const userEmail = document.getElementById('user-email');
+    if (userEmail && auth.email) {
+      userEmail.textContent = auth.email;
+      userEmail.classList.remove('hidden');
+    }
+    
+    // Logout functionality
+    const logoutBtn = document.getElementById('logout-btn');
+    logoutBtn?.addEventListener('click', function() {
+      localStorage.removeItem('didxalink_auth');
+      window.location.href = '/login';
+    });
+    
+    // Get elements
+    const tableBody = document.getElementById('contributions-table-body');
+    const totalCount = document.getElementById('total-count');
+    const pendingCount = document.getElementById('pending-count');
+    const approvedCount = document.getElementById('approved-count');
+    const statusFilter = document.getElementById('status-filter');
+    const searchInput = document.getElementById('search-input');
+    const detailModal = document.getElementById('detail-modal');
+    const closeModal = document.getElementById('close-modal');
+    const modalContent = document.getElementById('modal-content');
+    const modalActions = document.getElementById('modal-actions');
+    const showingStart = document.getElementById('showing-start');
+    const showingEnd = document.getElementById('showing-end');
+    const totalItems = document.getElementById('total-items');
+    const paginationContainer = document.getElementById('pagination-container');
+    
+    // Pagination settings
+    const itemsPerPage = 10;
+    let currentPage = 1;
+    
+    // Get contributions from localStorage
+    const getContributions = () => {
+      return JSON.parse(localStorage.getItem('contributions') || '[]');
+    };
+    
+    // Save contributions to localStorage
+    const saveContributions = (contributions) => {
+      localStorage.setItem('contributions', JSON.stringify(contributions));
+    };
+    
+    // Format date
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    };
+    
+    // Get status badge HTML
+    const getStatusBadge = (status) => {
+      switch (status) {
+        case 'pending':
+          return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pendiente</span>`;
+        case 'approved':
+          return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aprobado</span>`;
+        case 'rejected':
+          return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rechazado</span>`;
+        default:
+          return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">${status}</span>`;
+      }
+    };
+    
+    // Filter contributions
+    const filterContributions = () => {
+      const contributions = getContributions();
+      const statusValue = statusFilter?.value || 'all';
+      const searchValue = searchInput?.value?.toLowerCase() || '';
+      
+      return contributions.filter(contribution => {
+        // Filter by status
+        if (statusValue !== 'all' && contribution.status !== statusValue) {
+          return false;
+        }
+        
+        // Filter by search term
+        if (searchValue) {
+          const searchFields = [
+            contribution.name,
+            contribution.email,
+            contribution.community,
+            contribution.spanish,
+            contribution.zapotec,
+            contribution.notes
+          ].filter(Boolean).map(field => field?.toLowerCase());
+          
+          return searchFields.some(field => field?.includes(searchValue));
+        }
+        
+        return true;
+      });
+    };
+    
+    // Render contributions table
+    const renderContributions = () => {
+      const filteredContributions = filterContributions();
+      const totalFilteredItems = filteredContributions.length;
+      
+      // Calculate pagination
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage, totalFilteredItems);
+      const paginatedContributions = filteredContributions.slice(startIndex, endIndex);
+      
+      // Update pagination info
+      if (showingStart) showingStart.textContent = totalFilteredItems ? startIndex + 1 : 0;
+      if (showingEnd) showingEnd.textContent = endIndex.toString();
+      if (totalItems) totalItems.textContent = totalFilteredItems.toString();
+      
+      // Render pagination
+      renderPagination(totalFilteredItems);
+      
+      // Clear table
+      if (tableBody) tableBody.innerHTML = '';
+      
+      // If no contributions, show message
+      if (paginatedContributions.length === 0) {
+        if (tableBody) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                No hay contribuciones disponibles
+              </td>
+            </tr>
+          `;
+        }
+        return;
+      }
+      
+      // Render contributions
+      paginatedContributions.forEach(contribution => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        row.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div>
+                <div class="text-sm font-medium text-gray-900">${contribution.name}</div>
+                <div class="text-sm text-gray-500">${contribution.email}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="text-sm text-gray-900">${contribution.spanish}</div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="text-sm text-gray-900">${contribution.zapotec}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-500">${formatDate(contribution.date)}</div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            ${getStatusBadge(contribution.status)}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <button class="text-primary hover:text-primary/80 view-details" data-id="${contribution.id}">
+              Ver detalles
+            </button>
+          </td>
+        `;
+        
+        tableBody?.appendChild(row);
+      });
+      
+      // Add event listeners to view details buttons
+      document.querySelectorAll('.view-details').forEach(button => {
+        button.addEventListener('click', function() {
+          const id = this.getAttribute('data-id');
+          showContributionDetails(id);
+        });
+      });
+    };
+    
+    // Render pagination
+    const renderPagination = (totalItems) => {
+      if (!paginationContainer) return;
+      
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      paginationContainer.innerHTML = '';
+      
+      // Previous button
+      const prevButton = document.createElement('button');
+      prevButton.className = `relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`;
+      prevButton.innerHTML = `
+        <span class="sr-only">Previous</span>
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+      `;
+      
+      if (currentPage > 1) {
+        prevButton.addEventListener('click', () => {
+          currentPage--;
+          renderContributions();
+        });
+      }
+      
+      paginationContainer.appendChild(prevButton);
+      
+      // Page numbers
+      const maxVisiblePages = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      
+      if (endPage - startPage + 1 < maxVisiblePages) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.className = `relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium ${i === currentPage ? 'text-primary bg-primary/10 z-10' : 'text-gray-700 hover:bg-gray-50'}`;
+        pageButton.textContent = i.toString();
+        
+        if (i !== currentPage) {
+          pageButton.addEventListener('click', () => {
+            currentPage = i;
+            renderContributions();
+          });
+        }
+        
+        paginationContainer.appendChild(pageButton);
+      }
+      
+      // Next button
+      const nextButton = document.createElement('button');
+      nextButton.className = `relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`;
+      nextButton.innerHTML = `
+        <span class="sr-only">Next</span>
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+        </svg>
+      `;
+      
+      if (currentPage < totalPages) {
+        nextButton.addEventListener('click', () => {
+          currentPage++;
+          renderContributions();
+        });
+      }
+      
+      paginationContainer.appendChild(nextButton);
+    };
+    
+    // Show contribution details
+    const showContributionDetails = (id) => {
+      const contributions = getContributions();
+      const contribution = contributions.find(c => c.id.toString() === id.toString());
+      
+      if (!contribution) return;
+      
+      // Populate modal content
+      if (modalContent) {
+        modalContent.innerHTML = `
+          <div class="border-b pb-4">
+            <h4 class="text-sm font-medium text-gray-500">Información del contribuidor</h4>
+            <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p class="text-sm text-gray-500">Nombre</p>
+                <p class="text-base font-medium">${contribution.name}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Correo electrónico</p>
+                <p class="text-base font-medium">${contribution.email}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Comunidad</p>
+                <p class="text-base font-medium">${contribution.community || 'No especificada'}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Fecha de envío</p>
+                <p class="text-base font-medium">${formatDate(contribution.date)}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="pt-4">
+            <h4 class="text-sm font-medium text-gray-500">Contribución</h4>
+            <div class="mt-2 space-y-4">
+              <div>
+                <p class="text-sm text-gray-500">Español</p>
+                <p class="text-base font-medium">${contribution.spanish}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Zapoteco</p>
+                <p class="text-base font-medium">${contribution.zapotec}</p>
+              </div>
+              ${contribution.notes ? `
+                <div>
+                  <p class="text-sm text-gray-500">Notas</p>
+                  <p class="text-base">${contribution.notes}</p>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+          
+          <div class="pt-4">
+            <h4 class="text-sm font-medium text-gray-500">Estado</h4>
+            <div class="mt-2">
+              ${getStatusBadge(contribution.status)}
+            </div>
+          </div>
+        `;
+      }
+      
+      // Populate modal actions
+      if (modalActions) {
+        modalActions.innerHTML = '';
+        
+        if (contribution.status === 'pending') {
+          // Approve button
+          const approveButton = document.createElement('button');
+          approveButton.className = 'bg-green-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500';
+          approveButton.textContent = 'Aprobar';
+          approveButton.addEventListener('click', () => {
+            updateContributionStatus(id, 'approved');
+          });
+          modalActions.appendChild(approveButton);
+          
+          // Reject button
+          const rejectButton = document.createElement('button');
+          rejectButton.className = 'bg-red-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500';
+          rejectButton.textContent = 'Rechazar';
+          rejectButton.addEventListener('click', () => {
+            updateContributionStatus(id, 'rejected');
+          });
+          modalActions.appendChild(rejectButton);
+        } else {
+          // Reset button
+          const resetButton = document.createElement('button');
+          resetButton.className = 'bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-yellow-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500';
+          resetButton.textContent = 'Marcar como pendiente';
+          resetButton.addEventListener('click', () => {
+            updateContributionStatus(id, 'pending');
+          });
+          modalActions.appendChild(resetButton);
+        }
+        
+        // Close button
+        const closeButton = document.createElement('button');
+        closeButton.className = 'border border-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500';
+        closeButton.textContent = 'Cerrar';
+        closeButton.addEventListener('click', () => {
+          if (detailModal) detailModal.classList.add('hidden');
+        });
+        modalActions.appendChild(closeButton);
+      }
+      
+      // Show modal
+      if (detailModal) detailModal.classList.remove('hidden');
+    };
+    
+    // Update contribution status
+    const updateContributionStatus = (id, status) => {
+      const contributions = getContributions();
+      const index = contributions.findIndex(c => c.id.toString() === id.toString());
+      
+      if (index === -1) return;
+      
+      contributions[index].status = status;
+      saveContributions(contributions);
+      
+      // Hide modal
+      if (detailModal) detailModal.classList.add('hidden');
+      
+      // Update UI
+      updateStats();
+      renderContributions();
+    };
+    
+    // Update stats
+    const updateStats = () => {
+      const contributions = getContributions();
+      const total = contributions.length;
+      const pending = contributions.filter(c => c.status === 'pending').length;
+      const approved = contributions.filter(c => c.status === 'approved').length;
+      
+      if (totalCount) totalCount.textContent = total.toString();
+      if (pendingCount) pendingCount.textContent = pending.toString();
+      if (approvedCount) approvedCount.textContent = approved.toString();
+    };
+    
+    // Event listeners
+    statusFilter?.addEventListener('change', () => {
+      currentPage = 1;
+      renderContributions();
+    });
+    
+    searchInput?.addEventListener('input', () => {
+      currentPage = 1;
+      renderContributions();
+    });
+    
+    closeModal?.addEventListener('click', () => {
+      if (detailModal) detailModal.classList.add('hidden');
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+      if (detailModal && e.target === detailModal) {
+        detailModal.classList.add('hidden');
+      }
+    });
+    
+    // Initialize
+    updateStats();
+    renderContributions();
+  });
+</script>
