@@ -198,26 +198,62 @@ import Layout from '../layouts/Layout.astro';
   </main>
 </Layout>
 
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    const step1 = document.getElementById('step-1');
+    const step2 = document.getElementById('step-2');
+    const nextBtn = document.getElementById('next-btn');
+    const backBtn = document.getElementById('back-btn');
+    const progressBar = document.getElementById('progress-bar');
     const form = document.getElementById('contribution-form');
     const successMessage = document.getElementById('success-message');
     const errorMessage = document.getElementById('error-message');
-    const errorDetails = document.getElementById('error-details');
-    const newContributionBtn = document.getElementById('new-contribution-btn');
-    const tryAgainBtn = document.getElementById('try-again-btn');
+    const addAnother = document.getElementById('add-another');
+    const tryAgain = document.getElementById('try-again');
+
+    // Next button click
+    nextBtn?.addEventListener('click', function() {
+      // Basic validation for step 1
+      const name = document.getElementById('name') as HTMLInputElement;
+      const email = document.getElementById('email') as HTMLInputElement;
+      
+      if (!name.value || !email.value) {
+        alert('Por favor completa los campos requeridos.');
+        return;
+      }
+      
+      // Hide step 1, show step 2
+      step1?.classList.add('hidden');
+      step2?.classList.remove('hidden');
+      
+      // Update progress bar
+      if (progressBar) progressBar.style.width = '100%';
+      
+      // Update progress text
+      const progressTexts = document.querySelectorAll('.relative span');
+      if (progressTexts[0]) progressTexts[0].classList.remove('text-primary');
+      if (progressTexts[0]) progressTexts[0].classList.add('text-gray-400');
+      if (progressTexts[1]) progressTexts[1].classList.remove('text-gray-400');
+      if (progressTexts[1]) progressTexts[1].classList.add('text-primary');
+    });
     
-    // Function to reset the form
-    const resetForm = () => {
-      form.reset();
-      form.classList.remove('hidden');
-      successMessage.classList.add('hidden');
-      errorMessage.classList.add('hidden');
-    };
-    
-    // Event listeners for buttons
-    newContributionBtn?.addEventListener('click', resetForm);
-    tryAgainBtn?.addEventListener('click', resetForm);
+    // Back button click
+    backBtn?.addEventListener('click', function() {
+      // Show step 1, hide step 2
+      step1?.classList.remove('hidden');
+      step2?.classList.add('hidden');
+      
+      // Update progress bar
+      if (progressBar) progressBar.style.width = '50%';
+      
+      // Update progress text
+      const progressTexts = document.querySelectorAll('.relative span');
+      if (progressTexts[0]) progressTexts[0].classList.add('text-primary');
+      if (progressTexts[0]) progressTexts[0].classList.remove('text-gray-400');
+      if (progressTexts[1]) progressTexts[1].classList.add('text-gray-400');
+      if (progressTexts[1]) progressTexts[1].classList.remove('text-primary');
+    });
     
     // Form submission
     form?.addEventListener('submit', async function(e) {
@@ -225,14 +261,7 @@ import Layout from '../layouts/Layout.astro';
       
       // Get form data
       const formData = new FormData(form);
-      const contributionData = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        community: formData.get('community'),
-        spanish: formData.get('spanish'),
-        zapotec: formData.get('zapotec'),
-        notes: formData.get('notes') || ''
-      };
+      const contribution = Object.fromEntries(formData.entries());
       
       try {
         // Send data to API
@@ -241,40 +270,65 @@ import Layout from '../layouts/Layout.astro';
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(contributionData),
+          body: JSON.stringify(contribution),
           mode: 'cors',
         });
         
         if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.error) {
+          throw new Error(result.error);
         }
         
-        // Show success message
-        form.classList.add('hidden');
-        successMessage.classList.remove('hidden');
-        
-        // Also store in local storage for the dashboard
-        // This is just for demonstration - in production, you'd rely on the API
-/*         const storedContributions = JSON.parse(localStorage.getItem('contributions') || '[]');
-        const newContribution = {
-          ...contributionData,
-          id: Date.now(),
-          status: 'pending',
-          date: new Date().toISOString()
-        };
-        storedContributions.push(newContribution);
-        localStorage.setItem('contributions', JSON.stringify(storedContributions)); */
+        // Hide form, show success message
+        form.style.display = 'none';
+        if (successMessage) successMessage.classList.remove('hidden');
         
       } catch (error) {
         console.error('Error al enviar la contribución:', error);
         
-        // Show error message
-        form.classList.add('hidden');
-        errorMessage.classList.remove('hidden');
-        if (errorDetails) {
-          errorDetails.textContent = error.message || 'Por favor, intenta nuevamente más tarde.';
+        // Hide form, show error message
+        form.style.display = 'none';
+        if (errorMessage) {
+          errorMessage.classList.remove('hidden');
+          const errorDetails = errorMessage.querySelector('#error-details');
+          if (errorDetails) {
+            errorDetails.textContent = error.message || 'Hubo un error al enviar tu contribución. Por favor, intenta nuevamente.';
+          }
         }
       }
     });
+    
+    // Add another contribution
+    addAnother?.addEventListener('click', resetForm);
+    
+    // Try again after error
+    tryAgain?.addEventListener('click', resetForm);
+    
+    function resetForm() {
+      // Reset form
+      form?.reset();
+      
+      // Show step 1, hide step 2 and messages
+      step1?.classList.remove('hidden');
+      step2?.classList.add('hidden');
+      if (successMessage) successMessage.classList.add('hidden');
+      if (errorMessage) errorMessage.classList.add('hidden');
+      form.style.display = 'block';
+      
+      // Reset progress bar
+      if (progressBar) progressBar.style.width = '50%';
+      
+      // Reset progress text
+      const progressTexts = document.querySelectorAll('.relative span');
+      if (progressTexts[0]) progressTexts[0].classList.add('text-primary');
+      if (progressTexts[0]) progressTexts[0].classList.remove('text-gray-400');
+      if (progressTexts[1]) progressTexts[1].classList.add('text-gray-400');
+      if (progressTexts[1]) progressTexts[1].classList.remove('text-primary');
+    }
   });
 </script>
