@@ -356,6 +356,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // Update contribution status via API
   const updateContributionStatus = async (id, action) => {
     try {
+      // Obtener el token de autenticación del almacenamiento local
+      const auth = JSON.parse(localStorage.getItem("didxalink_auth") || "{}")
+      const token = auth.token
+
+      if (!token) {
+        throw new Error("No se encontró token de autenticación")
+      }
+
       // Mostrar indicador de carga en el modal
       if (modalActions) {
         modalActions.innerHTML = `
@@ -373,12 +381,14 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ action }),
       })
 
       if (!response.ok) {
-        throw new Error("Error al actualizar el estado de la contribución")
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Error al actualizar el estado de la contribución")
       }
 
       // Actualizar la contribución en la lista local
@@ -796,5 +806,4 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize
   fetchContributions()
 })
-
 </script>
