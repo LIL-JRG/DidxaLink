@@ -353,18 +353,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Update contribution status via API
+  let modalActions
+  let API_URL
+  let allContributions
+  let detailModal
+  let updateStats
+
+// Declarar las funciones renderContributions, showNotification y showContributionDetails
+  let renderContributions
+  let showNotification
+  let showContributionDetails
+
+// Update contribution status via API
   const updateContributionStatus = async (id, action) => {
     try {
-      // Obtener el token de autenticación del almacenamiento local
       const auth = JSON.parse(localStorage.getItem("didxalink_auth") || "{}")
       const token = auth.token
+
+      console.log("Token de autenticación:", token ? "Presente" : "Ausente")
 
       if (!token) {
         throw new Error("No se encontró token de autenticación")
       }
 
-      // Mostrar indicador de carga en el modal
       if (modalActions) {
         modalActions.innerHTML = `
           <div class="flex items-center justify-center w-full">
@@ -377,6 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `
       }
 
+      console.log(`Enviando solicitud PATCH a ${API_URL}/contributions/${id}`)
       const response = await fetch(`${API_URL}/contributions/${id}`, {
         method: "PATCH",
         headers: {
@@ -386,39 +398,43 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ action }),
       })
 
+      const responseData = await response.json()
+
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Error al actualizar el estado de la contribución")
+        console.error("Respuesta de error del servidor:", responseData)
+        throw new Error(responseData.error || `Error ${response.status}: ${response.statusText}`)
       }
 
-      // Actualizar la contribución en la lista local
+      console.log("Respuesta del servidor:", responseData)
+
+    // Actualizar la contribución en la lista local solo si la acción fue exitosa
       const index = allContributions.findIndex((c) => c.id.toString() === id.toString())
       if (index !== -1) {
         allContributions[index].status = action === "approve" ? "approved" : "rejected"
       }
 
-      // Cerrar modal
+    // Cerrar modal
       if (detailModal) detailModal.classList.add("hidden")
 
-      // Actualizar UI
+    // Actualizar UI
       updateStats()
       renderContributions()
 
-      // Mostrar notificación de éxito
       showNotification(
         action === "approve" ? "Contribución aprobada con éxito" : "Contribución rechazada con éxito",
         "success",
       )
     } catch (error) {
-      console.error("Error al actualizar el estado:", error)
+      console.error("Error detallado al actualizar el estado:", error)
+      showNotification(`Error al procesar la acción: ${error.message}. Intenta de nuevo.`, "error")
 
-      // Mostrar notificación de error
-      showNotification("Error al procesar la acción. Intenta de nuevo.", "error")
-
-      // Restaurar botones en el modal
-      showContributionDetails(id)
+    // No cerramos el modal en caso de error
+      if (detailModal) {
+        showContributionDetails(id)
+      }
     }
   }
+
 
   // Filter contributions
   const filterContributions = () => {
@@ -806,4 +822,5 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize
   fetchContributions()
 })
+
 </script>
