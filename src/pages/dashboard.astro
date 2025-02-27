@@ -353,19 +353,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-
- // Declarar las variables necesarias
-  let modalActions
-  let API_URL
-  let allContributions
-  let detailModal
-  let updateStats
-
-// Declarar las funciones renderContributions, showNotification y showContributionDetails
-  let renderContributions
-  let showNotification
-  let showContributionDetails 
-  // Update contribution status via API
   const updateContributionStatus = async (id, action) => {
   try {
     const auth = JSON.parse(localStorage.getItem("didxalink_auth") || "{}")
