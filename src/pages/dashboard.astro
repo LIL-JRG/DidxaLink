@@ -353,6 +353,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+
+ // Declarar las variables necesarias
   let modalActions
   let API_URL
   let allContributions
@@ -362,79 +364,77 @@ document.addEventListener("DOMContentLoaded", () => {
 // Declarar las funciones renderContributions, showNotification y showContributionDetails
   let renderContributions
   let showNotification
-  let showContributionDetails
-
-// Update contribution status via API
+  let showContributionDetails 
+  // Update contribution status via API
   const updateContributionStatus = async (id, action) => {
-    try {
-      const auth = JSON.parse(localStorage.getItem("didxalink_auth") || "{}")
-      const token = auth.token
+  try {
+    const auth = JSON.parse(localStorage.getItem("didxalink_auth") || "{}")
+    const token = auth.token
 
-      console.log("Token de autenticación:", token ? "Presente" : "Ausente")
+    console.log("Token de autenticación:", token ? "Presente" : "Ausente")
 
-      if (!token) {
-        throw new Error("No se encontró token de autenticación")
-      }
+    if (!token) {
+      throw new Error("No se encontró token de autenticación")
+    }
 
-      if (modalActions) {
-        modalActions.innerHTML = `
-          <div class="flex items-center justify-center w-full">
-            <svg class="animate-spin h-5 w-5 text-primary mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span>Procesando...</span>
-          </div>
-        `
-      }
+    if (modalActions) {
+      modalActions.innerHTML = `
+        <div class="flex items-center justify-center w-full">
+          <svg class="animate-spin h-5 w-5 text-primary mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Procesando...</span>
+        </div>
+      `
+    }
 
-      console.log(`Enviando solicitud PATCH a ${API_URL}/contributions/${id}`)
-      const response = await fetch(`${API_URL}/contributions/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ action }),
-      })
+    console.log(`Enviando solicitud PATCH a ${API_URL}/contributions/${id}`)
+    const response = await fetch(`${API_URL}/contributions/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ action }),
+    })
 
-      const responseData = await response.json()
+    const responseData = await response.json()
 
-      if (!response.ok) {
-        console.error("Respuesta de error del servidor:", responseData)
-        throw new Error(responseData.error || `Error ${response.status}: ${response.statusText}`)
-      }
+    if (!response.ok) {
+      console.error("Respuesta de error del servidor:", responseData)
+      throw new Error(responseData.error || `Error ${response.status}: ${response.statusText}`)
+    }
 
-      console.log("Respuesta del servidor:", responseData)
+    console.log("Respuesta del servidor:", responseData)
 
     // Actualizar la contribución en la lista local solo si la acción fue exitosa
-      const index = allContributions.findIndex((c) => c.id.toString() === id.toString())
-      if (index !== -1) {
-        allContributions[index].status = action === "approve" ? "approved" : "rejected"
-      }
+    const index = allContributions.findIndex((c) => c.id.toString() === id.toString())
+    if (index !== -1) {
+      allContributions[index].status = action === "approve" ? "approved" : "rejected"
+    }
 
     // Cerrar modal
-      if (detailModal) detailModal.classList.add("hidden")
+    if (detailModal) detailModal.classList.add("hidden")
 
     // Actualizar UI
-      updateStats()
-      renderContributions()
+    updateStats()
+    renderContributions()
 
-      showNotification(
-        action === "approve" ? "Contribución aprobada con éxito" : "Contribución rechazada con éxito",
-        "success",
-      )
-    } catch (error) {
-      console.error("Error detallado al actualizar el estado:", error)
-      showNotification(`Error al procesar la acción: ${error.message}. Intenta de nuevo.`, "error")
+    showNotification(
+      action === "approve" ? "Contribución aprobada con éxito" : "Contribución rechazada con éxito",
+      "success",
+    )
+  } catch (error) {
+    console.error("Error detallado al actualizar el estado:", error)
+    showNotification(`Error al procesar la acción: ${error.message}. Intenta de nuevo.`, "error")
 
     // No cerramos el modal en caso de error
-      if (detailModal) {
-        showContributionDetails(id)
-      }
+    if (detailModal) {
+      showContributionDetails(id)
     }
   }
-
+}
 
   // Filter contributions
   const filterContributions = () => {
