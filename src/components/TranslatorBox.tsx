@@ -19,7 +19,7 @@ const TranslatorBox = () => {
 
     const timer = setTimeout(() => {
       setDebouncedText(spanishText)
-    }, 1000) // Reduced to 1 second
+    }, 500) // Reduced to 1 second
 
     return () => clearTimeout(timer)
   }, [spanishText])
