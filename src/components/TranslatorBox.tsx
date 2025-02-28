@@ -19,7 +19,7 @@ const TranslatorBox = () => {
     
     const timer = setTimeout(() => {
       setDebouncedText(spanishText);
-    }, 1000); // 3 second debounce as requested
+    }, 3000); // 3 second debounce as requested
 
     return () => clearTimeout(timer);
   }, [spanishText]);
@@ -75,9 +75,10 @@ const TranslatorBox = () => {
     try {
       const response = await fetch('https://translator-api-zapotec.vercel.app/api/translate', {
         method: 'POST',
-        mode: 'no-cors',
         headers: {
-          'Content-Type': 'applic      body: JSON.stringify({ text }),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
       });
 
       if (!response.ok) {
