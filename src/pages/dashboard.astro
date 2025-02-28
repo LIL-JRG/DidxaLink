@@ -353,8 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-// Update contribution status via API
-const updateContributionStatus = async (id, action) => {
+  const updateContributionStatus = async (id, action) => {
   try {
     const auth = JSON.parse(localStorage.getItem("didxalink_auth") || "{}")
     const token = auth.token
@@ -417,8 +416,8 @@ const updateContributionStatus = async (id, action) => {
     console.error("Error detallado al actualizar el estado:", error)
     let errorMessage = error.message
     if (error.message.includes("Error al insertar en la tabla de traducciones")) {
-      errorMessage +=
-        " Puede haber un problema con los permisos en la base de datos. Por favor, contacta al administrador."
+      errorMessage =
+        "Hubo un problema al procesar la contribución. Por favor, contacta al administrador del sistema para obtener ayuda."
     }
     showNotification(`Error al procesar la acción: ${errorMessage}. Intenta de nuevo.`, "error")
 
