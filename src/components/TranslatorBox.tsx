@@ -1,103 +1,98 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
 const TranslatorBox = () => {
-  const [spanishText, setSpanishText] = useState("")
-  const [zapotecText, setZapotecText] = useState("")
-  const [isListening, setIsListening] = useState(false)
-  const [showShareModal, setShowShareModal] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [debouncedText, setDebouncedText] = useState("")
+  const [spanishText, setSpanishText] = useState('');
+  const [zapotecText, setZapotecText] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [debouncedText, setDebouncedText] = useState('');
 
   // Debounce function for translation with 3 second delay
   useEffect(() => {
-    if (spanishText === "") {
-      setZapotecText("")
-      setDebouncedText("")
-      return
+    if (spanishText === '') {
+      setZapotecText('');
+      setDebouncedText('');
+      return;
     }
-
+    
     const timer = setTimeout(() => {
-      setDebouncedText(spanishText)
-    }, 500) // Reduced to 1 second
+      setDebouncedText(spanishText);
+    }, 1000); // 3 second debounce as requested
 
-    return () => clearTimeout(timer)
-  }, [spanishText])
+    return () => clearTimeout(timer);
+  }, [spanishText]);
 
   // Effect to trigger translation when debounced text changes
   useEffect(() => {
     if (debouncedText) {
-      handleTranslate(debouncedText)
+      handleTranslate(debouncedText);
     }
-  }, [debouncedText])
+  }, [debouncedText]);
 
   // Speech recognition setup
   const startListening = () => {
-    if ("webkitSpeechRecognition" in window) {
-      const recognition = new (window as any).webkitSpeechRecognition()
-      recognition.lang = "es-MX"
-      recognition.continuous = false
-      recognition.interimResults = false
+    if ('webkitSpeechRecognition' in window) {
+      const recognition = new (window as any).webkitSpeechRecognition();
+      recognition.lang = 'es-MX';
+      recognition.continuous = false;
+      recognition.interimResults = false;
 
       recognition.onstart = () => {
-        setIsListening(true)
-      }
+        setIsListening(true);
+      };
 
       recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript
-        setSpanishText(transcript)
+        const transcript = event.results[0][0].transcript;
+        setSpanishText(transcript);
         // Translation will be triggered by the debounce effect
-      }
+      };
 
       recognition.onerror = () => {
-        setIsListening(false)
-      }
+        setIsListening(false);
+      };
 
       recognition.onend = () => {
-        setIsListening(false)
-      }
+        setIsListening(false);
+      };
 
-      recognition.start()
+      recognition.start();
     } else {
-      alert("La función de voz no está disponible en este navegador.")
+      alert('La función de voz no está disponible en este navegador.');
     }
-  }
-
+  };
 
   // Updated translation function using the API
   const handleTranslate = async (text: string) => {
     if (!text.trim()) {
-      setZapotecText("")
-      return
+      setZapotecText('');
+      return;
     }
-
-    setIsLoading(true)
-    setError(null)
+    
+    setIsLoading(true);
+    setError(null);
     try {
-      const response = await fetch("/api/translate", {
-        method: "POST",
+      const response = await fetch('https://translator-api-zapotec.vercel.app/api/translate', {
+        method: 'POST',
+        mode: 'no-cors',
         headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text }),
-      })
+          'Content-Type': 'applic      body: JSON.stringify({ text }),
+      });
 
       if (!response.ok) {
-        const errorData = await response.json()
-        console.error("API Error:", errorData)
-        throw new Error(errorData.error || `Error en la traducción: ${response.status} ${response.statusText}`)
+        throw new Error('Error en la traducción');
       }
 
-      const data = await response.json()
-      console.log("API Response:", data)
-      setZapotecText(data.translated)
+      const data = await response.json();
+      setZapotecText(data.translated);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al traducir. Por favor, intente de nuevo.")
-      console.error("Error de traducción:", err)
+      setError('Error al traducir. Por favor, intente de nuevo.');
+      console.error('Error de traducción:', err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleCopy = async () => {
     try {
