@@ -353,7 +353,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  const updateContributionStatus = async (id, action) => {
+// Update contribution status via API
+const updateContributionStatus = async (id, action) => {
   try {
     const auth = JSON.parse(localStorage.getItem("didxalink_auth") || "{}")
     const token = auth.token
@@ -414,7 +415,12 @@ document.addEventListener("DOMContentLoaded", () => {
     )
   } catch (error) {
     console.error("Error detallado al actualizar el estado:", error)
-    showNotification(`Error al procesar la acción: ${error.message}. Intenta de nuevo.`, "error")
+    let errorMessage = error.message
+    if (error.message.includes("Error al insertar en la tabla de traducciones")) {
+      errorMessage +=
+        " Puede haber un problema con los permisos en la base de datos. Por favor, contacta al administrador."
+    }
+    showNotification(`Error al procesar la acción: ${errorMessage}. Intenta de nuevo.`, "error")
 
     // No cerramos el modal en caso de error
     if (detailModal) {
@@ -422,6 +428,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 }
+
+
 
   // Filter contributions
   const filterContributions = () => {
