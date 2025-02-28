@@ -353,7 +353,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  const updateContributionStatus = async (id, action) => {
+// Update contribution status via API
+const updateContributionStatus = async (id, action) => {
   try {
     const auth = JSON.parse(localStorage.getItem("didxalink_auth") || "{}")
     const token = auth.token
@@ -412,6 +413,9 @@ document.addEventListener("DOMContentLoaded", () => {
       action === "approve" ? "Contribución aprobada con éxito" : "Contribución rechazada con éxito",
       "success",
     )
+
+    // Recargar las contribuciones para asegurarse de que los cambios se reflejen
+    await loadContributions()
   } catch (error) {
     console.error("Error detallado al actualizar el estado:", error)
     let errorMessage = error.message
@@ -428,7 +432,28 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 }
 
+// Función para cargar las contribuciones
+const loadContributions = async () => {
+  try {
+    const response = await fetch(`${API_URL}/contributions`, {
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("didxalink_auth") || "{}").token}`,
+      },
+    })
+    if (!response.ok) {
+      throw new Error("Error al cargar las contribuciones")
+    }
+    allContributions = await response.json()
+    renderContributions()
+    updateStats()
+  } catch (error) {
+    console.error("Error al cargar las contribuciones:", error)
+    showNotification("Error al cargar las contribuciones. Por favor, intenta de nuevo.", "error")
+  }
+}
 
+// Asegúrate de llamar a loadContributions cuando se carga la página
+document.addEventListener("DOMContentLoaded", loadContributions)
 
   // Filter contributions
   const filterContributions = () => {
