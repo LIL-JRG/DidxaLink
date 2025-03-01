@@ -75,7 +75,7 @@ const TranslatorBox = () => {
     setIsLoading(true)
     setError(null)
     try {
-      const response = await fetch("/api/translate", {
+      const response = await fetch("https://didxa-link.vercel.app/api/translate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
